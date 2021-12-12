@@ -83,6 +83,28 @@ const TextInput = ({ value, oninput }: TextInputProps) => {
     );
 };
 
+interface TextareaProps {
+    value: string;
+    oninput: (val: string) => void;
+}
+
+const Textarea = ({ value, oninput }: TextareaProps) => {
+    return H(
+        'div',
+        { className: 'textarea-outer-wrapper' },
+        H(
+            'div',
+            { className: 'textarea-inner-wrapper' },
+            H('textarea', {
+                type: 'text',
+                rows: 3,
+                value,
+                oninput: (e: any) => oninput(e.target.value),
+            })
+        )
+    );
+};
+
 interface FieldProps {
     label: string;
     input: any;
@@ -178,6 +200,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         messageToast = '',
         loading = true,
         overrideUrl = null,
+        background = '',
     } = state;
     const mdValue = md ? '1' : '0';
     const url = new URL(window.location.origin);
@@ -185,6 +208,9 @@ const App = (_: any, state: AppState, setState: SetState) => {
     url.searchParams.append('theme', theme);
     url.searchParams.append('md', mdValue);
     url.searchParams.append('fontSize', fontSize);
+    if (background) {
+        url.searchParams.append('background', background);
+    }
 
     return H(
         'div',
@@ -230,12 +256,20 @@ const App = (_: any, state: AppState, setState: SetState) => {
                 }),
                 H(Field, {
                     label: 'Text Input',
-                    input: H(TextInput, {
+                    input: H(Textarea, {
                         value: text,
                         oninput: (val: string) => {
                             console.log('oninput ' + val);
                             setLoadingState({ text: val, overrideUrl: url });
                         },
+                    }),
+                }),
+                H(Field, {
+                    label: 'Background Image (optional)',
+                    input: H(TextInput, {
+                        value: background,
+                        oninput: (val: string) =>
+                            setLoadingState({ background: val }),
                     }),
                 })
             )
