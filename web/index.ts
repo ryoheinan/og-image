@@ -64,10 +64,11 @@ const Dropdown = ({ options, value, onchange, small }: DropdownProps) => {
 
 interface TextInputProps {
     value: string;
-    oninput: (val: string) => void;
+    onchange: (val: string) => void;
+    typeVal?: string;
 }
 
-const TextInput = ({ value, oninput }: TextInputProps) => {
+const TextInput = ({ value, typeVal = 'text', onchange }: TextInputProps) => {
     return H(
         'div',
         { className: 'input-outer-wrapper' },
@@ -75,9 +76,9 @@ const TextInput = ({ value, oninput }: TextInputProps) => {
             'div',
             { className: 'input-inner-wrapper' },
             H('input', {
-                type: 'text',
+                type: typeVal,
                 value,
-                oninput: (e: any) => oninput(e.target.value),
+                onchange: (e: any) => onchange(e.target.value),
             })
         )
     );
@@ -85,10 +86,10 @@ const TextInput = ({ value, oninput }: TextInputProps) => {
 
 interface TextareaProps {
     value: string;
-    oninput: (val: string) => void;
+    onchange: (val: string) => void;
 }
 
-const Textarea = ({ value, oninput }: TextareaProps) => {
+const Textarea = ({ value, onchange }: TextareaProps) => {
     return H(
         'div',
         { className: 'textarea-outer-wrapper' },
@@ -99,7 +100,7 @@ const Textarea = ({ value, oninput }: TextareaProps) => {
                 type: 'text',
                 rows: 3,
                 value,
-                oninput: (e: any) => oninput(e.target.value),
+                onchange: (e: any) => onchange(e.target.value),
             })
         )
     );
@@ -146,11 +147,6 @@ const Toast = ({ show, message }: ToastProps) => {
     );
 };
 
-const themeOptions: DropdownOption[] = [
-    { text: 'Light', value: 'light' },
-    { text: 'Dark', value: 'dark' },
-];
-
 const fileTypeOptions: DropdownOption[] = [
     { text: 'PNG', value: 'png' },
     { text: 'JPEG', value: 'jpeg' },
@@ -193,7 +189,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     const {
         fileType = 'png',
         fontSize = '100px',
-        theme = 'light',
+        textColor = '#000000',
         md = true,
         text = '**Hello** World',
         showToast = false,
@@ -205,7 +201,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     const mdValue = md ? '1' : '0';
     const url = new URL(window.location.origin);
     url.pathname = `${encodeURIComponent(text)}.${fileType}`;
-    url.searchParams.append('theme', theme);
+    url.searchParams.append('textColor', textColor);
     url.searchParams.append('md', mdValue);
     url.searchParams.append('fontSize', fontSize);
     if (background) {
@@ -220,13 +216,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
             { className: 'pull-left' },
             H(
                 'div',
-                H(Field, {
-                    label: 'Theme',
-                    input: H(Dropdown, {
-                        options: themeOptions,
-                        value: theme,
-                    }),
-                }),
                 H(Field, {
                     label: 'File Type',
                     input: H(Dropdown, {
@@ -258,9 +247,23 @@ const App = (_: any, state: AppState, setState: SetState) => {
                     label: 'Text Input',
                     input: H(Textarea, {
                         value: text,
-                        oninput: (val: string) => {
-                            console.log('oninput ' + val);
+                        onchange: (val: string) => {
+                            console.log('onchange ' + val);
                             setLoadingState({ text: val, overrideUrl: url });
+                        },
+                    }),
+                }),
+                H(Field, {
+                    label: 'Text Color',
+                    input: H(TextInput, {
+                        value: textColor,
+                        typeVal: 'color',
+                        onchange: (val: string) => {
+                            console.log('onchange ' + val);
+                            setLoadingState({
+                                textColor: val,
+                                overrideUrl: url,
+                            });
                         },
                     }),
                 }),
@@ -268,7 +271,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                     label: 'Background Image (optional)',
                     input: H(TextInput, {
                         value: background,
-                        oninput: (val: string) =>
+                        onchange: (val: string) =>
                             setLoadingState({ background: val }),
                     }),
                 })

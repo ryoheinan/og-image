@@ -5,13 +5,13 @@ import { ParsedRequest } from './types';
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     const { pathname, query } = parse(req.url || '/', true);
-    const { fontSize, theme, md, background } = query || {};
+    const { fontSize, textColor, md, background } = query || {};
 
     if (Array.isArray(fontSize)) {
         throw new Error('Expected a single fontSize');
     }
-    if (Array.isArray(theme)) {
-        throw new Error('Expected a single theme');
+    if (Array.isArray(textColor)) {
+        throw new Error('Expected a single textColor');
     }
     if (Array.isArray(background)) {
         throw new Error('Expected a single background');
@@ -28,11 +28,11 @@ export function parseRequest(req: IncomingMessage) {
         extension = arr.pop() as string;
         text = arr.join('.');
     }
-
+    
     const parsedRequest: ParsedRequest = {
         fileType: extension === 'jpeg' ? extension : 'png',
         text: decodeURIComponent(text),
-        theme: theme === 'dark' ? 'dark' : 'light',
+        textColor: textColor ? textColor : '#000000',
         md: md === '1' || md === 'true',
         fontSize: fontSize || '96px',
         background: background ? decodeURIComponent(background) : undefined,

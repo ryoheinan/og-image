@@ -14,15 +14,10 @@ const bold = readFileSync(
 ).toString('base64');
 
 function getCss(
-    theme: string,
+    textColor: string,
     fontSize: string,
     background: string | undefined
 ) {
-    let foreground = 'black';
-
-    if (theme === 'dark') {
-        foreground = 'white';
-    }
     return `
     @font-face {
         font-family: 'NotoSansJP';
@@ -71,13 +66,13 @@ function getCss(
         font-family: 'NotoSansJP', sans-serif;
         font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
-        color: ${foreground};
+        color: ${textColor};
         line-height: 1.8;
     }`;
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { text, theme, md, fontSize, background } = parsedReq;
+    const { text, textColor, md, fontSize, background } = parsedReq;
     marked.setOptions({
         gfm: true,
         breaks: true,
@@ -90,7 +85,7 @@ export function getHtml(parsedReq: ParsedRequest) {
     <title>Generated Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        ${getCss(theme, fontSize, background)}
+        ${getCss(textColor, fontSize, background)}
     </style>
     <body>
         <div>
