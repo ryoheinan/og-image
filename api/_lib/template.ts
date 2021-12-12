@@ -16,6 +16,7 @@ const bold = readFileSync(
 function getCss(
     textColor: string,
     fontSize: string,
+    marginTop: string,
     background: string | undefined
 ) {
     return `
@@ -46,7 +47,7 @@ function getCss(
         height: 100vh;
         display: flex;
         text-align: center;
-        align-items: center;
+        ${marginTop === 'center' ? 'align-items: center;' : ''}
         justify-content: center;
         padding: 0 20px;
     }
@@ -67,12 +68,13 @@ function getCss(
         font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
         color: ${textColor};
-        line-height: 1.8;
+        line-height: 1.5;
+        margin-top: ${marginTop !== 'center' ? sanitizeHtml(marginTop) : '0'};
     }`;
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { text, textColor, md, fontSize, background } = parsedReq;
+    const { text, textColor, md, fontSize, marginTop, background } = parsedReq;
     marked.setOptions({
         gfm: true,
         breaks: true,
@@ -85,7 +87,7 @@ export function getHtml(parsedReq: ParsedRequest) {
     <title>Generated Image</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        ${getCss(textColor, fontSize, background)}
+        ${getCss(textColor, fontSize, marginTop, background)}
     </style>
     <body>
         <div>

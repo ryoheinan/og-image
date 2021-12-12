@@ -189,6 +189,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     const {
         fileType = 'png',
         fontSize = '100px',
+        marginTop = '',
         textColor = '#000000',
         md = true,
         text = '**Hello** World',
@@ -204,6 +205,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     url.searchParams.append('textColor', textColor);
     url.searchParams.append('md', mdValue);
     url.searchParams.append('fontSize', fontSize);
+    url.searchParams.append('marginTop', marginTop);
     if (background) {
         url.searchParams.append('background', background);
     }
@@ -232,6 +234,19 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         value: fontSize,
                         onchange: (val: string) =>
                             setLoadingState({ fontSize: val }),
+                    }),
+                }),
+                H(Field, {
+                    label: 'Margin Top',
+                    input: H(TextInput, {
+                        value: marginTop,
+                        onchange: (val: string) => {
+                            console.log('onchange ' + val);
+                            setLoadingState({
+                                marginTop: val,
+                                overrideUrl: url,
+                            });
+                        },
                     }),
                 }),
                 H(Field, {
